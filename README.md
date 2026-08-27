@@ -1,7 +1,7 @@
 # Spring Boot Student REST API
 
-A simple REST API built using **Spring Boot, Spring MVC, JDBC Template, and MySQL**.  
-This project demonstrates the implementation of a basic CRUD-based backend application using a layered architecture.
+A simple REST API built using **Spring Boot, Spring MVC, Spring JDBC, and MySQL**.  
+The project implements CRUD operations for student records using a layered architecture.
 
 ## Tech Stack
 
@@ -13,55 +13,168 @@ This project demonstrates the implementation of a basic CRUD-based backend appli
 - Gradle
 - REST API
 
-## Project Structure
+## Project Architecture
 
-The project follows a layered architecture:
+The application follows a layered architecture:
 
 ```text
+Client
+  ↓
 Controller
-    ↓
+  ↓
 Service
-    ↓
+  ↓
 DAO
-    ↓
+  ↓
 MySQL Database
 ````
 
 ### Layers
 
-* **Controller** – Handles HTTP requests and API endpoints.
-* **Service** – Contains business logic.
-* **DAO** – Handles database operations using `JdbcTemplate`.
-* **Model** – Represents the `Student` entity.
+* **Controller** – Handles HTTP requests and REST API endpoints.
+* **Service** – Acts as an intermediate layer between the controller and DAO.
+* **DAO** – Performs database operations using `JdbcTemplate`.
+* **Model** – Represents the student data.
 
 ## Features
 
-* Create a student
-* Retrieve student details
-* Retrieve all students
-* Update student details
-* Delete a student
+* Create a student record
+* Retrieve all student records
+* Retrieve a student by ID
+* Update a student record
+* Delete a student record
 * MySQL database integration
+* CRUD operations using `JdbcTemplate`
+* Layered Controller-Service-DAO architecture
 * RESTful API endpoints
-* Layered architecture using Controller, Service, and DAO
 
 ## API Endpoints
 
-| Method   | Endpoint         | Description                |
-| -------- | ---------------- | -------------------------- |
-| `GET`    | `/students`      | Get all students           |
-| `GET`    | `/students/{id}` | Get a student by ID        |
-| `POST`   | `/students`      | Create a new student       |
-| `PUT`    | `/students/{id}` | Update an existing student |
-| `DELETE` | `/students/{id}` | Delete a student           |
+The Student API uses the base path:
 
-## Database Configuration
+```text
+/api/student
+```
 
-The application uses MySQL.
+| Method   | Endpoint            | Description                |
+| -------- | ------------------- | -------------------------- |
+| `POST`   | `/api/student`      | Create a new student       |
+| `GET`    | `/api/student`      | Get all students           |
+| `GET`    | `/api/student/{id}` | Get a student by ID        |
+| `PUT`    | `/api/student`      | Update an existing student |
+| `DELETE` | `/api/student/{id}` | Delete a student by ID     |
+| `GET`    | `/home`             | Test/home endpoint         |
 
-For security reasons, database credentials are **not included in this repository**.
+## Example Requests
 
-Configure your local `application.properties` with your own database details:
+### Create Student
+
+```http
+POST http://localhost:8080/api/student
+Content-Type: application/json
+```
+
+Example request body:
+
+```json
+{
+  "id": 101,
+  "uname": "Arpan",
+  "uphy": "85",
+  "uche": "90",
+  "umath": "88"
+}
+```
+
+The API returns the created student with HTTP status:
+
+```text
+201 CREATED
+```
+
+### Get All Students
+
+```http
+GET http://localhost:8080/api/student
+```
+
+Returns all student records from the database.
+
+### Get Student by ID
+
+```http
+GET http://localhost:8080/api/student/101
+```
+
+Returns the student with the specified ID.
+
+If the student does not exist, the API returns:
+
+```text
+404 NOT FOUND
+```
+
+### Update Student
+
+```http
+PUT http://localhost:8080/api/student
+Content-Type: application/json
+```
+
+Example request body:
+
+```json
+{
+  "id": 101,
+  "uname": "Arpan Patel",
+  "uphy": "90",
+  "uche": "92",
+  "umath": "95"
+}
+```
+
+### Delete Student
+
+```http
+DELETE http://localhost:8080/api/student/101
+```
+
+If the student exists, the API returns:
+
+```text
+204 NO CONTENT
+```
+
+If the student does not exist:
+
+```text
+404 NOT FOUND
+```
+
+## Database
+
+The application uses **MySQL** and the Spring `JdbcTemplate` for database operations.
+
+The current implementation works with the following table structure:
+
+```text
+insmarks
+├── urno
+├── uname
+├── uphy
+├── uche
+└── umath
+```
+
+Database credentials are intentionally not included in this repository.
+
+Configure your local database connection in:
+
+```text
+src/main/resources/application.properties
+```
+
+Example:
 
 ```properties
 spring.application.name=REST_API
@@ -84,15 +197,19 @@ git clone https://github.com/YOUR_USERNAME/spring-boot-student-rest-api.git
 
 ### 2. Open the project
 
-Open the project in IntelliJ IDEA, Eclipse, or another Java IDE.
+Open the project using IntelliJ IDEA, Eclipse, or another Java IDE.
 
 ### 3. Configure MySQL
 
-Create the required database and configure the database connection in:
+Create the required MySQL database and table.
+
+Then update:
 
 ```text
 src/main/resources/application.properties
 ```
+
+with your local database credentials.
 
 ### 4. Run the application
 
@@ -108,11 +225,11 @@ On Windows:
 gradlew.bat bootRun
 ```
 
-Or run the main Spring Boot application class directly from your IDE.
+You can also run the main Spring Boot application class directly from your IDE.
 
 ## Testing the API
 
-The endpoints can be tested using tools such as:
+The API can be tested using:
 
 * Postman
 * Insomnia
@@ -122,43 +239,53 @@ The endpoints can be tested using tools such as:
 Example:
 
 ```http
-GET http://localhost:8080/students
+GET http://localhost:8080/api/student
 ```
+
+## HTTP Status Codes Used
+
+| Status Code      | Meaning                         |
+| ---------------- | ------------------------------- |
+| `200 OK`         | Request completed successfully  |
+| `201 CREATED`    | Student successfully created    |
+| `204 NO CONTENT` | Student successfully deleted    |
+| `404 NOT FOUND`  | Requested student was not found |
 
 ## Learning Objectives
 
-This project was created to practice and understand:
+This project was created to practice:
 
-* Spring Boot application structure
+* Spring Boot application development
 * Spring MVC
 * REST API development
-* HTTP methods and status codes
+* HTTP methods
+* REST endpoints
 * Dependency Injection
-* Layered architecture
-* DAO and Service patterns
-* JdbcTemplate
-* MySQL database connectivity
+* Controller-Service-DAO architecture
+* Spring `JdbcTemplate`
+* MySQL connectivity
 * CRUD operations
 * Gradle project management
+* `ResponseEntity`
+* HTTP status codes
 
 ## Future Improvements
 
 Possible improvements include:
 
-* Exception handling using `@ControllerAdvice`
+* Global exception handling using `@ControllerAdvice`
 * Request validation using Bean Validation
 * DTO implementation
-* Proper HTTP response handling with `ResponseEntity`
+* Better error responses
+* `ResponseEntity` improvements
 * Pagination and sorting
-* API documentation using Swagger/OpenAPI
+* Swagger/OpenAPI documentation
 * Unit and integration testing
 * Authentication and authorization using Spring Security
+* Environment-based database configuration
 
 ## Author
 
-**Arpan**
+**Arpan Patel**
 
-This project is part of my Java and Spring development practice, focused on building backend applications and strengthening my understanding of Spring Boot and REST APIs.
-
-```
-```
+This project is part of my Java and Spring development practice, focused on building backend applications and strengthening my understanding of Spring Boot, Spring MVC, REST APIs, JDBC, and MySQL.
